@@ -1,0 +1,74 @@
+LAYOUT
+VBOX
+
+GROUP (TEXT="README")
+GRID
+{
+Make sure that ex_htmlpagegenerator is running with FGLAPPSERVER=8095 set.
+If you get this site cannot be reached then the process is not running in the background
+
+Please also note these web pages are plain. The expectation is you would use CSS
+to style them appropriately.
+}
+END
+END
+GROUP (TEXT="Simple Test")
+GRID
+{
+A simple test.  
+[b01                   ]
+}
+END
+END
+
+GROUP (TEXT="Simple Test with Arguments")
+GRID
+{
+Add arguments to the URL
+Arg 1 [a01             ]
+Arg 2 [a02             ]
+[b02                   ]
+}
+END
+END
+GROUP (TEXT="List")
+GRID
+{
+A page that has read rows from a database table to output a list.
+Once the list is displayed, click on a row to see an individual row
+[b03                   ]
+}
+END
+END
+
+GROUP (TEXT="Form Encoded")
+GRID
+{
+A page that has form encoded input variables.
+Enter values and click submit and another page is displayed with those values
+[b04                   ]
+}
+END
+END
+
+GROUP (TEXT="Storage")
+GRID
+{
+Example showing use of HTML storage
+[b05                   ]
+}
+END
+END
+
+END
+END
+ATTRIBUTES
+BUTTON b01: test;
+
+EDIT a01 = formonly.arg1, SCROLL;
+EDIT a02 = formonly.arg2, SCROLL;
+BUTTON b02: test_args;
+
+BUTTON b03: list;
+BUTTON b04: form_encoded;
+BUTTON b05: storage;
