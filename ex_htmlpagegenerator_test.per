@@ -9,6 +9,8 @@ If you get this site cannot be reached then the process is not running in the ba
 
 Please also note these web pages are plain. The expectation is you would use CSS
 to style them appropriately.
+
+[b00                   ]
 }
 END
 END
@@ -60,9 +62,20 @@ Example showing use of HTML storage
 END
 END
 
+GROUP (TEXT="XSLT")
+GRID
+{
+Example showing XSLT Transformation
+[b06                   ]
+}
+END
+END
+
 END
 END
 ATTRIBUTES
+BUTTON b00: start;
+
 BUTTON b01: test;
 
 EDIT a01 = formonly.arg1, SCROLL;
@@ -72,3 +85,4 @@ BUTTON b02: test_args;
 BUTTON b03: list;
 BUTTON b04: form_encoded;
 BUTTON b05: storage;
+BUTTON b06: xslt;

@@ -1,9 +1,16 @@
 MAIN
 DEFINE arg1, arg2 STRING
 
+   
     CLOSE WINDOW SCREEN
     OPEN WINDOW w WITH FORM "ex_htmlpagegenerator_test"
     INPUT BY NAME arg1, arg2 ATTRIBUTES(UNBUFFERED, WITHOUT DEFAULTS=TRUE, ACCEPT=FALSE)
+        ON ACTION start ATTRIBUTES(TEXT="Start HTML Page Generator")
+            TRY
+                RUN "fglrun ex_htmlpagegenerator" WITHOUT WAITING
+                CATCH
+        END TRY
+
         ON ACTION test ATTRIBUTES(TEXT="Simple Test")
             CALL ui.Interface.frontCall("standard","launchurl","http://localhost:8095/test",[])
 
@@ -18,6 +25,9 @@ DEFINE arg1, arg2 STRING
 
         ON ACTION storage ATTRIBUTES(TEXT="Storage")
             CALL ui.Interface.frontCall("standard","launchurl","http://localhost:8095/storage",[])
+
+         ON ACTION xslt ATTRIBUTES(TEXT="XSLT")
+            CALL ui.Interface.frontCall("standard","launchurl","http://localhost:8095/xslt",[])
         
     END INPUT
     CLOSE WINDOW w

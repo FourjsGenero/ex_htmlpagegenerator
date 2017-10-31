@@ -20,7 +20,7 @@ DEFINE page_result xml.DomDocument
     CALL com.WebServiceEngine.Start()
   
     WHILE TRUE      
-        LET req = com.WebServiceEngine.GetHttpServiceRequest(-1)
+        LET req = com.WebServiceEngine.GetHttpServiceRequest(60)
         IF req IS NULL THEN
             EXIT PROGRAM
         END IF
@@ -104,6 +104,20 @@ DEFINE page_result xml.DomDocument
                         -- Unable to generate page
                         CALL req.sendResponse(400, NULL)
                     END IF
+
+                WHEN "xslt"
+                    CALL RunXSLP("xslt_example.xslt", "xslt_example.xml") RETURNING ok, page_result
+                    DISPLAY ok
+                    DISPLAY page_result.saveToString()
+                    IF ok THEN
+                         -- Return success and the page
+                        CALL req.setResponseHeader("Content-Type","text/html")
+                        CALL req.sendTextResponse(200,NULL,page_result.saveToString())
+                    ELSE
+                        -- Unable to generate page
+                        CALL req.sendResponse(400, NULL)
+                    END IF
+                
                    
                 OTHERWISE -- path value doesn't make sense
                     CALL req.sendResponse(400, NULL)
@@ -637,4 +651,62 @@ FUNCTION init_database()
     INSERT INTO country VALUES("Yemen")
     INSERT INTO country VALUES("Zambia")
     INSERT INTO country VALUES("Zimbabwe")
+END FUNCTION
+
+
+
+#function from http://4js.com/online_documentation/fjs-fgl-manual-html/#c_gws_XmlXSLTtransformer_example.html
+FUNCTION RunXSLP(style,src)
+DEFINE style,src      STRING
+DEFINE ind            INTEGER
+DEFINE xslt           xml.XSLTTransformer
+DEFINE styleSheet     xml.DomDocument
+DEFINE source         xml.DomDocument
+DEFINE result         xml.DomDocument
+
+    # Load StyleSheet
+    TRY
+        LET styleSheet = xml.DomDocument.Create()
+        CALL styleSheet.load(style)
+    CATCH
+        DISPLAY "Error: unable to load stylesheet",style
+        RETURN FALSE, NULL
+    END TRY
+  
+    # Create XSLT transformer
+    TRY
+        LET xslt = xml.XSLTTransformer.CreateFromDocument(styleSheet)
+        FOR ind=1 TO xslt.getErrorsCount()
+            DISPLAY "StyleSheet error #"||ind||" : ",xslt.getErrorDescription(ind)
+        END FOR
+    CATCH
+        DISPLAY "Error : unable to create XSLT transformer from ",styleSheet
+        RETURN FALSE, NULL
+    END TRY
+
+    # Load Source 
+    TRY
+        LET source = xml.DomDocument.Create()
+        CALL source.load(src)
+    CATCH
+        DISPLAY "Error : unable to load Source from ",src
+        RETURN FALSE, NULL
+    END TRY
+  
+    # Execute XSLT 
+    TRY
+        LET result = xslt.doTransform(source)
+        FOR ind=1 TO xslt.getErrorsCount()
+            DISPLAY "Error #"||ind||" : ",xslt.getErrorDescription(ind)
+        END FOR    
+    CATCH
+        DISPLAY "Error : unable to apply XSLT stylesheet"
+        FOR ind=1 TO xslt.getErrorsCount()
+            DISPLAY "Fatal Error #"||ind||" : ",xslt.getErrorDescription(ind)
+        END FOR
+        RETURN FALSE, NULL
+    END TRY
+
+    RETURN TRUE, result
+
 END FUNCTION
